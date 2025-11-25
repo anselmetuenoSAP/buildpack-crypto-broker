@@ -126,7 +126,10 @@ ls -lh cryptobroker-server
 # Binary is already in BUILD_DIR/crypto-broker-server/ - no need to move it
 # Just clean up the go module cache to reduce droplet size and avoid permission issues
 echo "-----> Cleaning Go module cache from droplet"
-rm -rf "$GOPATH"
+if [ -d "$GOPATH" ]; then
+    chmod -R u+w "$GOPATH" 2>/dev/null || true
+    rm -rf "$GOPATH"
+fi
 
 # Create a profile.d script to set environment variables at runtime
 PROFILE_DIR="$DEPS_DIR/$DEPS_IDX/profile.d"
