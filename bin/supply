@@ -123,11 +123,8 @@ fi
 echo "-----> Crypto Broker Server built successfully"
 ls -lh cryptobroker-server
 
-# Move the binary to a location that will be included in the app, not in deps
-echo "-----> Moving binary to app directory"
-cp cryptobroker-server "$BUILD_DIR/crypto-broker-server/"
-
-# Clean up the go module cache to reduce droplet size and avoid permission issues
+# Binary is already in BUILD_DIR/crypto-broker-server/ - no need to move it
+# Just clean up the go module cache to reduce droplet size and avoid permission issues
 echo "-----> Cleaning Go module cache from droplet"
 rm -rf "$GOPATH"
 
