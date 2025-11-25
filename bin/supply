@@ -97,12 +97,19 @@ if [ ! -f "go.mod" ]; then
     exit 1
 fi
 
-# Download dependencies and update go.sum
+# Verify go.sum exists
+if [ ! -f "go.sum" ]; then
+    echo "ERROR: go.sum not found. Please run 'go mod tidy' locally before deploying."
+    exit 1
+fi
+
+# Download dependencies
 echo "-----> Downloading Go dependencies"
 go mod download
 
-echo "-----> Tidying go.mod and go.sum"
-go mod tidy
+# Verify dependencies
+echo "-----> Verifying Go modules"
+go mod verify
 
 # Build the server binary
 echo "-----> Compiling server binary"
