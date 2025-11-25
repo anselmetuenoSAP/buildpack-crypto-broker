@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# bin/release - Provides default process types
+
+cat <<EOF
+---
+default_process_types:
+  web: crypto-broker-server/cryptobroker-server & sleep 2 && cd crypto-broker-cli-js && node dist/cli.js
+EOF

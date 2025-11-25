@@ -1,0 +1,18 @@
+# Crypto Broker Buildpack Manifest
+# This file provides metadata about the buildpack
+
+language: multi
+url: https://github.com/YOUR_ORG/buildpack-crypto-broker
+
+include_files:
+  - bin/detect
+  - bin/supply
+  - bin/finalize
+  - bin/release
+  - README.md
+
+default_versions: []
+
+dependency_deprecation_dates: []
+
+dependencies: []

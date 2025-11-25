@@ -1,0 +1,5 @@
+# Buildpack .gitignore
+*.log
+.DS_Store
+tmp/
+cache/

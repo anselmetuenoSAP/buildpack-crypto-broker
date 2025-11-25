@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# bin/detect - Determines if the buildpack should be applied
+
+set -e
+
+BUILD_DIR=$1
+
+# Check if this is a crypto-broker application
+if [ -d "$BUILD_DIR/crypto-broker-server" ] && [ -d "$BUILD_DIR/crypto-broker-cli-js" ]; then
+    echo "Crypto Broker Application"
+    exit 0
+fi
+
+exit 1

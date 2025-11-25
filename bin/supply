@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# bin/supply - Builds the Go server component
+
+set -e
+set -o pipefail
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+DEPS_DIR=$3
+DEPS_IDX=$4
+
+echo "-----> Crypto Broker Supply Buildpack"
+
+# Check go.mod for required Go version
+GO_MOD_PATH="$BUILD_DIR/crypto-broker-server/go.mod"
+GO_VERSION="1.23.3"  # Default version
+
+if [ -f "$GO_MOD_PATH" ]; then
+    # Extract Go version from go.mod (handles both 1.23.3 and 1.23 formats)
+    GO_MOD_VERSION=$(grep "^go " "$GO_MOD_PATH" | awk '{print $2}')
+    echo "-----> go.mod requires Go version: $GO_MOD_VERSION"
+    
+    # Map to available versions (1.25.0 doesn't exist, use 1.23.3)
+    case "$GO_MOD_VERSION" in
+        1.25*|1.24*|1.23*)
+            GO_VERSION="1.23.3"
+            ;;
+        1.22*)
+            GO_VERSION="1.22.8"
+            ;;
+        1.21*)
+            GO_VERSION="1.21.13"
+            ;;
+        *)
+            echo "-----> Using default Go version: $GO_VERSION"
+            ;;
+    esac
+fi
+
+echo "-----> Using Go version: $GO_VERSION"
+
+# Install Go if not already available
+GO_DIR="$DEPS_DIR/$DEPS_IDX/go"
+
+if [ ! -d "$GO_DIR" ]; then
+    echo "-----> Installing Go ${GO_VERSION}"
+    mkdir -p "$GO_DIR"
+    
+    # Detect architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "x86_64" ]; then
+        GO_ARCH="amd64"
+    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+        GO_ARCH="arm64"
+    else
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+    fi
+    
+    GO_URL="https://go.dev/dl/go${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
+    echo "-----> Downloading Go from ${GO_URL}"
+    curl -sL "$GO_URL" | tar -xz -C "$GO_DIR" --strip-components=1
+    
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to download or extract Go"
+        exit 1
+    fi
+fi
+
+export GOROOT="$GO_DIR"
+export PATH="$GO_DIR/bin:$PATH"
+export GOPATH="$DEPS_DIR/$DEPS_IDX/go_app"
+
+# Verify Go installation
+if ! command -v go &> /dev/null; then
+    echo "ERROR: Go command not found after installation"
+    exit 1
+fi
+
+echo "-----> Go version: $(go version)"
+
+echo "-----> Building Crypto Broker Server"
+cd "$BUILD_DIR/crypto-broker-server"
+
+# Check if go.mod exists
+if [ ! -f "go.mod" ]; then
+    echo "ERROR: go.mod not found in crypto-broker-server directory"
+    exit 1
+fi
+
+# Download dependencies
+echo "-----> Downloading Go dependencies"
+go mod download
+
+# Build the server binary
+echo "-----> Compiling server binary"
+go build -v -o cryptobroker-server ./cmd/server
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to build crypto-broker-server"
+    exit 1
+fi
+
+echo "-----> Crypto Broker Server built successfully"
+ls -lh cryptobroker-server
+
+# Create a profile.d script to set environment variables at runtime
+PROFILE_DIR="$DEPS_DIR/$DEPS_IDX/profile.d"
+mkdir -p "$PROFILE_DIR"
+
+cat > "$PROFILE_DIR/crypto-broker.sh" <<'EOF'
+#!/bin/bash
+export CRYPTO_BROKER_PROFILES_DIR="${CRYPTO_BROKER_PROFILES_DIR:-/home/vcap/app/crypto-broker-server/example-profiles}"
+export CRYPTO_BROKER_LOG_LEVEL="${CRYPTO_BROKER_LOG_LEVEL:-info}"
+export CRYPTO_BROKER_LOG_FORMAT="${CRYPTO_BROKER_LOG_FORMAT:-json}"
+export CRYPTO_BROKER_LOG_OUTPUT="${CRYPTO_BROKER_LOG_OUTPUT:-stdout}"
+EOF
+
+chmod +x "$PROFILE_DIR/crypto-broker.sh"
+
+echo "-----> Supply buildpack complete"

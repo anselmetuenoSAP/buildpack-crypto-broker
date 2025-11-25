@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# bin/finalize - Final setup before launch
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+DEPS_DIR=$3
+DEPS_IDX=$4
+
+echo "-----> Finalizing Crypto Broker Application"
+
+# Node.js buildpack will handle building the client
+# We just verify it's ready
+if [ -d "$BUILD_DIR/crypto-broker-cli-js" ]; then
+    echo "-----> Crypto Broker CLI directory found"
+    if [ -f "$BUILD_DIR/crypto-broker-cli-js/package.json" ]; then
+        echo "-----> package.json found"
+    fi
+fi
+
+echo "-----> Finalization complete"
