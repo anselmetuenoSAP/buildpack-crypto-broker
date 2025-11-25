@@ -13,7 +13,7 @@ echo "-----> Crypto Broker Supply Buildpack"
 
 # Check go.mod for required Go version
 GO_MOD_PATH="$BUILD_DIR/crypto-broker-server/go.mod"
-GO_VERSION="1.23.3"  # Default version
+GO_VERSION="1.25.0"  # Default version
 
 if [ -f "$GO_MOD_PATH" ]; then
     # Extract Go version from go.mod (handles both 1.23.3 and 1.23 formats)
