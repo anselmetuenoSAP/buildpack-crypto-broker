@@ -97,9 +97,12 @@ if [ ! -f "go.mod" ]; then
     exit 1
 fi
 
-# Download dependencies
+# Download dependencies and update go.sum
 echo "-----> Downloading Go dependencies"
 go mod download
+
+echo "-----> Tidying go.mod and go.sum"
+go mod tidy
 
 # Build the server binary
 echo "-----> Compiling server binary"
