@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 # bin/release - Provides default process types
 
+# Node.js app directory and entry point must be specified via environment variables
+NODE_APP_DIR="${BP_NODE_APP_DIR}"
+NODE_APP_ENTRY="${BP_NODE_APP_ENTRY}"
+
 cat <<EOF
 ---
 default_process_types:
-  web: crypto-broker-server/cryptobroker-server & sleep 2 && cd crypto-broker-cli-js && node dist/cli.js
+  web: crypto-broker-server/cryptobroker-server & sleep 2 && cd $NODE_APP_DIR && node $NODE_APP_ENTRY
 EOF
