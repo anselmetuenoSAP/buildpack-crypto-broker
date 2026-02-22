@@ -141,7 +141,9 @@ This buildpack must be used as a supply buildpack with the Node.js buildpack as 
 
 ## Making Scripts Executable
 
-Before deploying, ensure all scripts are executable:
+**Note:** This step is only necessary for buildpack developers/maintainers setting up the repository initially, or when using Option 2 (local buildpack references). If you're using Option 1 (Git repository), the executable permissions are already preserved in the repository and this step can be skipped.
+
+Before deploying locally or contributing to the buildpack, ensure all scripts are executable:
 
 ```bash
 chmod +x buildpack-crypto-broker/bin/*
