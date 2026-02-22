@@ -112,11 +112,30 @@ Your application structure should look like:
 my-app/
 ├── crypto-broker-server/    # Go server (required)
 ├── my-node-app/              # Your Node.js application
-│   ├── package.json
+│   ├── package.json          # Your app's dependencies
 │   └── src/
 │       └── index.js          # Entry point (or dist/cli.js, etc.)
+├── package.json              # Root package.json (required - see below)
 └── manifest.yml
 ```
+
+**Important:** The root `package.json` is required for the buildpack to work correctly. It must contain a `postinstall` script that installs dependencies in your Node.js application directory:
+
+```json
+{
+  "name": "crypto-broker-app",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.x"
+  },
+  "scripts": {
+    "postinstall": "cd ${BP_NODE_APP_DIR} && npm install --production"
+  }
+}
+```
+
+This script ensures that the Node.js buildpack installs dependencies in the correct directory specified by `BP_NODE_APP_DIR`.
 
 ## Multi-Buildpack Order
 
