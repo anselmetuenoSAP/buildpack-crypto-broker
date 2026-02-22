@@ -14,7 +14,7 @@ This buildpack:
 
 ### Option 1: Using the buildpack from a Git repository
 
-If you push this buildpack to a Git repository (e.g., GitHub), you can reference it directly without admin privileges:
+Push this buildpack to a Git repository (e.g., GitHub), then reference it directly without admin privileges:
 
 ```bash
 cf push -b https://github.com/YOUR_ORG/buildpack-crypto-broker.git -b nodejs_buildpack
@@ -28,21 +28,16 @@ buildpacks:
   - nodejs_buildpack
 ```
 
-### Option 2: Using the buildpack locally
+### Option 2: Using the buildpack locally (requires admin privileges)
 
-You can also reference the buildpack directory locally:
+You can reference the buildpack directory locally for testing:
 
 ```bash
 cd /path/to/workspace
 cf push -b file://$(pwd)/buildpack-crypto-broker -b nodejs_buildpack
 ```
 
-### Option 3: Package and upload as a Git buildpack
-
-1. Create a separate repository for this buildpack
-2. Copy the `buildpack-crypto-broker` directory contents to the repository root
-3. Commit and push to your Git hosting service
-4. Reference it in your deployment
+**Note:** Local buildpack references using `file://` require admin privileges on the Cloud Foundry platform and are typically only available for development and testing. They cannot be used in production deployments on most Cloud Foundry platforms.
 
 ## Buildpack Structure
 
