@@ -6,6 +6,11 @@ set -e
 BUILD_DIR=$1
 
 # Node.js app directory must be specified via BP_NODE_APP_DIR
+if [ -z "${BP_NODE_APP_DIR}" ]; then
+    echo "ERROR: BP_NODE_APP_DIR environment variable is required but not set"
+    exit 1
+fi
+
 NODE_APP_DIR="${BP_NODE_APP_DIR}"
 
 # Check if this is a crypto-broker application
