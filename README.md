@@ -17,14 +17,14 @@ This buildpack:
 Push this buildpack to a Git repository (e.g., GitHub), then reference it directly without admin privileges:
 
 ```bash
-cf push -b https://github.com/YOUR_ORG/buildpack-crypto-broker.git -b nodejs_buildpack
+cf push -b https://github.com/YOUR_ORG/crypto-broker-buildpack.git -b nodejs_buildpack
 ```
 
 Or use the `manifest.yml` with buildpack URLs:
 
 ```yaml
 buildpacks:
-  - https://github.com/YOUR_ORG/buildpack-crypto-broker.git
+  - https://github.com/YOUR_ORG/crypto-broker-buildpack.git
   - nodejs_buildpack
 ```
 
@@ -34,7 +34,7 @@ You can reference the buildpack directory locally for testing:
 
 ```bash
 cd /path/to/workspace
-cf push -b file://$(pwd)/buildpack-crypto-broker -b nodejs_buildpack
+cf push -b file://$(pwd)/crypto-broker-buildpack -b nodejs_buildpack
 ```
 
 **Note:** Local buildpack references using `file://` require admin privileges on the Cloud Foundry platform and are typically only available for development and testing. They cannot be used in production deployments on most Cloud Foundry platforms.
@@ -42,7 +42,7 @@ cf push -b file://$(pwd)/buildpack-crypto-broker -b nodejs_buildpack
 ## Buildpack Structure
 
 ```
-buildpack-crypto-broker/
+crypto-broker-buildpack/
 ├── bin/
 │   ├── detect    # Detects if this buildpack should be used
 │   ├── supply    # Builds the Go server (supply phase)
@@ -81,7 +81,7 @@ This buildpack is now parametrizable! You can use it with any Node.js applicatio
 
 ```yaml
 buildpacks:
-  - https://github.com/YOUR_ORG/buildpack-crypto-broker.git
+  - https://github.com/YOUR_ORG/crypto-broker-buildpack.git
   - nodejs_buildpack
 env:
   BP_NODE_APP_DIR: crypto-broker-cli-js
@@ -93,7 +93,7 @@ env:
 
 ```yaml
 buildpacks:
-  - https://github.com/YOUR_ORG/buildpack-crypto-broker.git
+  - https://github.com/YOUR_ORG/crypto-broker-buildpack.git
   - nodejs_buildpack
 env:
   BP_NODE_APP_DIR: my-node-app
@@ -136,7 +136,7 @@ This script ensures that the Node.js buildpack installs dependencies in the corr
 
 This buildpack must be used as a supply buildpack with the Node.js buildpack as the final buildpack:
 
-1. **buildpack-crypto-broker** (supply) - Builds Go server
+1. **crypto-broker-buildpack** (supply) - Builds Go server
 2. **nodejs_buildpack** (final) - Builds Node.js client
 
 ## Making Scripts Executable
@@ -146,5 +146,5 @@ This buildpack must be used as a supply buildpack with the Node.js buildpack as 
 Before deploying locally or contributing to the buildpack, ensure all scripts are executable:
 
 ```bash
-chmod +x buildpack-crypto-broker/bin/*
+chmod +x crypto-broker-buildpack/bin/*
 ```
